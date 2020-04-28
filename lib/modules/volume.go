@@ -47,8 +47,8 @@ func (c Volume) UpdateBlock(b *i3barjson.Block) {
 	v := outStr[iBegin+1 : iEnd]
 
 	// If the device is "off", gray out the indicator.
-	if len(outStr) >= iEnd+4 && outStr[iEnd+3] == 'f' {
-		b.Color = "#222222"
+	if len(outStr) >= iEnd+5 && outStr[iEnd+4] == 'f' {
+		b.Color = "#9e9e9e"
 	}
 
 	b.FullText = fmt.Sprintf(fullTextFmt, v)
