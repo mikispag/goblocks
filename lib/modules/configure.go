@@ -45,6 +45,8 @@ type BlockConfig interface {
 	GetUpdateInterval() float64
 	GetUpdateSignal() int
 	GetBlockType() string
+	GetSeparator() bool
+	GetSeparatorBlockWidth() int
 	UpdateBlock(b *i3barjson.Block)
 }
 
@@ -55,11 +57,13 @@ type BlockConfig interface {
 // an anonymous field. That way, each Block configuration struct will implement
 // the full BlockConfig interface.
 type BlockConfigBase struct {
-	Type           string  `yaml:"type"`
-	UpdateInterval float64 `yaml:"update_interval"`
-	Label          string  `yaml:"label"`
-	Color          string  `yaml:"color"`
-	UpdateSignal   int     `yaml:"update_signal"`
+	Type                string  `yaml:"type"`
+	UpdateInterval      float64 `yaml:"update_interval"`
+	Label               string  `yaml:"label"`
+	Color               string  `yaml:"color"`
+	UpdateSignal        int     `yaml:"update_signal"`
+	Separator           bool    `yaml:"separator"`
+	SeparatorBlockWidth int     `yaml:"separator_block_width"`
 }
 
 // GetUpdateInterval returns the block's update interval in seconds.
@@ -71,6 +75,16 @@ func (c BlockConfigBase) GetUpdateInterval() float64 {
 // refresh.
 func (c BlockConfigBase) GetUpdateSignal() int {
 	return c.UpdateSignal
+}
+
+// GetSeparator returns whether the block needs a separator.
+func (c BlockConfigBase) GetSeparator() bool {
+	return c.Separator
+}
+
+// GetSeparatorBlockWidth returns the block's separator block width.
+func (c BlockConfigBase) GetSeparatorBlockWidth() int {
+	return c.SeparatorBlockWidth
 }
 
 // GetBlockType returns the block's type as a string.
@@ -197,8 +211,12 @@ func GetConfig(cfg *Config) error {
 func GetBlocks(blockConfigSlice []BlockConfig) ([]*Block, error) {
 	blocks := make([]*Block, len(blockConfigSlice))
 	for i, blockConfig := range blockConfigSlice {
+		sbw := 20
+		if blockConfig.GetSeparatorBlockWidth() > 0 {
+			sbw = blockConfig.GetSeparatorBlockWidth()
+		}
 		blocks[i] = &Block{
-			i3barjson.Block{Separator: true, SeparatorBlockWidth: 20},
+			i3barjson.Block{Separator: blockConfig.GetSeparator(), SeparatorBlockWidth: sbw},
 			blockConfig,
 		}
 	}
