@@ -2,9 +2,10 @@ package modules
 
 import (
 	"fmt"
-	"github.com/davidscholberg/go-i3barjson"
 	"os/exec"
 	"strings"
+
+	"github.com/davidscholberg/go-i3barjson"
 )
 
 // Volume represents the configuration for the volume display block.
@@ -43,5 +44,12 @@ func (c Volume) UpdateBlock(b *i3barjson.Block) {
 		b.FullText = fmt.Sprintf(fullTextFmt, "cannot parse amixer output")
 		return
 	}
-	b.FullText = fmt.Sprintf(fullTextFmt, outStr[iBegin+1:iEnd])
+	v := outStr[iBegin+1 : iEnd]
+
+	// If the device is "off", gray out the indicator.
+	if len(outStr) >= iEnd+4 && outStr[iEnd+3] == 'f' {
+		b.Color = "#222222"
+	}
+
+	b.FullText = fmt.Sprintf(fullTextFmt, v)
 }
