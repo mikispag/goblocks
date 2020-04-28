@@ -3,9 +3,10 @@ package modules
 import (
 	"bytes"
 	"fmt"
-	"github.com/davidscholberg/go-i3barjson"
 	"net"
 	"text/template"
+
+	"github.com/davidscholberg/go-i3barjson"
 )
 
 // Interface represents the configuration for the network interface block.
@@ -51,10 +52,10 @@ func (c Interface) UpdateBlock(b *i3barjson.Block) {
 
 	if iface.Flags&net.FlagUp != 0 {
 		b.Urgent = false
-		info.Status = "up"
+		info.Status = "UP"
 	} else {
 		b.Urgent = true
-		info.Status = "down"
+		info.Status = "DOWN"
 	}
 
 	addrs, err := iface.Addrs()
