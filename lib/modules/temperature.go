@@ -2,10 +2,11 @@ package modules
 
 import (
 	"fmt"
-	"github.com/davidscholberg/go-i3barjson"
 	"io/ioutil"
 	"os"
 	"strings"
+
+	"github.com/davidscholberg/go-i3barjson"
 )
 
 // Temperature represents the configuration for the CPU temperature block.
@@ -80,5 +81,5 @@ func (c Temperature) UpdateBlock(b *i3barjson.Block) {
 	} else {
 		b.Urgent = false
 	}
-	b.FullText = fmt.Sprintf("%s%.2f°C", c.Label, avgTemp)
+	b.FullText = fmt.Sprintf("%s%.0f°C", c.Label, avgTemp)
 }
