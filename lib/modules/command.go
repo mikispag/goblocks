@@ -16,6 +16,7 @@ type Command struct {
 func (c Command) UpdateBlock(b *i3barjson.Block) {
 	var cmdOutput []byte
 	b.Color = c.Color
+	b.Urgent = false
 	fullTextFmt := fmt.Sprintf("%s%%s", c.Label)
 
 	cmdParse := strings.Fields(c.Cmd)
