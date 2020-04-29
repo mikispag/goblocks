@@ -3,6 +3,7 @@ package modules
 import (
 	"fmt"
 	"os/exec"
+	"strconv"
 	"strings"
 
 	"github.com/davidscholberg/go-i3barjson"
@@ -19,7 +20,6 @@ type Volume struct {
 // Currently, only the ALSA master channel volume is supported.
 func (c Volume) UpdateBlock(b *i3barjson.Block) {
 	b.Color = c.Color
-	fullTextFmt := fmt.Sprintf("%s%%s", c.Label)
 	amixerCmd := "amixer"
 	if c.MixerDevice == "" {
 		c.MixerDevice = "default"
@@ -30,26 +30,40 @@ func (c Volume) UpdateBlock(b *i3barjson.Block) {
 	amixerArgs := []string{"-D", c.MixerDevice, "get", c.Channel}
 	out, err := exec.Command(amixerCmd, amixerArgs...).Output()
 	if err != nil {
-		b.FullText = fmt.Sprintf(fullTextFmt, err.Error())
+		b.FullText = err.Error()
 		return
 	}
 	outStr := string(out)
 	iBegin := strings.Index(outStr, "[")
 	if iBegin == -1 {
-		b.FullText = fmt.Sprintf(fullTextFmt, "cannot parse amixer output")
+		b.FullText = "cannot parse amixer output"
 		return
 	}
 	iEnd := strings.Index(outStr, "]")
 	if iEnd == -1 {
-		b.FullText = fmt.Sprintf(fullTextFmt, "cannot parse amixer output")
+		b.FullText = "cannot parse amixer output"
 		return
 	}
-	v := outStr[iBegin+1 : iEnd]
 
-	// If the device is "off", gray out the indicator.
+	v, err := strconv.Atoi(outStr[iBegin+1 : iEnd-1])
+	if err != nil {
+		b.FullText = "cannot parse amixer output"
+		return
+	}
+
+	// Update label depending on the volume label.
+	c.Label = "🔊 "
+	if v < 20 {
+		c.Label = "🔈 "
+	} else if v < 75 {
+		c.Label = "🔉 "
+	}
+
+	// If the device is "off", gray out the indicator and update the label.
 	if len(outStr) >= iEnd+5 && outStr[iEnd+4] == 'f' {
+		c.Label = "🔇 "
 		b.Color = "#9e9e9e"
 	}
 
-	b.FullText = fmt.Sprintf(fullTextFmt, v)
+	b.FullText = fmt.Sprintf("%s%d%%",c.Label, v)
 }
