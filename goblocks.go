@@ -7,7 +7,7 @@ import (
 	"reflect"
 
 	"github.com/davidscholberg/go-i3barjson"
-	"github.com/davidscholberg/goblocks/lib/modules"
+	"github.com/mikispag/goblocks/lib/modules"
 )
 
 func main() {

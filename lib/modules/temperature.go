@@ -3,6 +3,7 @@ package modules
 import (
 	"fmt"
 	"io/ioutil"
+	"math"
 	"os"
 	"strings"
 
@@ -81,5 +82,5 @@ func (c Temperature) UpdateBlock(b *i3barjson.Block) {
 	} else {
 		b.Urgent = false
 	}
-	b.FullText = fmt.Sprintf("%s%.0f°C", c.Label, avgTemp)
+	b.FullText = fmt.Sprintf("%s%d°C", c.Label, int(math.Round(avgTemp)))
 }

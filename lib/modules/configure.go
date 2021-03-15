@@ -61,6 +61,7 @@ type BlockConfigBase struct {
 	UpdateInterval      float64 `yaml:"update_interval"`
 	Label               string  `yaml:"label"`
 	Color               string  `yaml:"color"`
+	Markup              string  `yaml:"markup"`
 	UpdateSignal        int     `yaml:"update_signal"`
 	Separator           bool    `yaml:"separator"`
 	SeparatorBlockWidth int     `yaml:"separator_block_width"`
